@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const dataParser = require('./dataParser');
 const cors = require('cors');
 
@@ -7,38 +6,24 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 const TOKEN = process.env.GITHUB_TOKEN;
+const BASE_URL = 'https://api.github.com';
 
 app.use(express.json());
 app.use(cors());
 
-app.get('/', async (req, res) => {
+app.get('/repos/:username', async (request, response) => {
+  const { username } = request.params;
+  const url = `${BASE_URL}/users/${username}/repos`;
+
   try {
-    const response = await axios.get('https://api.github.com/rate_limit', {
+    const repos = await fetch(url, {
       headers: { Authorization: TOKEN ? `token ${TOKEN}` : '' },
     });
-    res.json(response.data);
+    const data = await repos.json();
+    const parsedData = await dataParser.parseData(data, TOKEN);
+    response.json(parsedData);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error', message: error });
-  }
-});
-
-app.get('/api/:username', async (req, res) => {
-  const user = req.params.username;
-  try {
-    const response = await axios.get(
-      `https://api.github.com/users/${user}/repos`,
-      {
-        headers: { Authorization: TOKEN ? `token ${TOKEN}` : '' },
-      }
-    );
-    const parsedData = await dataParser.parseData(response.data, TOKEN);
-    res.json(parsedData);
-  } catch (error) {
-    if (error.response && error.response.status === 404) {
-      res.status(404).send('User not found');
-    } else {
-      res.status(500).json({ error: 'Internal server error', message: error });
-    }
+    response.status(500).json({ error: error.message });
   }
 });
 
