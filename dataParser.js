@@ -20,6 +20,10 @@ async function fetchLanguages(url, token) {
 }
 
 async function parseData(data, token) {
+  if (!Array.isArray(data)) {
+    throw new Error('Expected data to be an array');
+  }
+
   const parsedDataPromises = data.map(async (repo) => ({
     name: repo.name,
     description: truncateDescription(repo.description),
