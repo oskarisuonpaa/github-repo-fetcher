@@ -22,7 +22,7 @@ app.get('/:username', async (req, res) => {
     if (error.response && error.response.status === 404) {
       res.status(404).send('User not found');
     } else {
-      res.status(500).send('Error fetching repositories');
+      res.status(500).json({ error: 'Internal server error', message: error });
     }
   }
 });
