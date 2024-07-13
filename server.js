@@ -11,15 +11,24 @@ const TOKEN = process.env.GITHUB_TOKEN;
 app.use(express.json());
 app.use(cors());
 
-app.get('/:username', async (req, res) => {
+app.get('/', async (req, res) => {
+  try {
+    const response = await axios.get('https://api.github.com/rate_limit', {
+      headers: { Authorization: TOKEN ? `token ${TOKEN}` : '' },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error', message: error });
+  }
+});
+
+app.get('/api/:username', async (req, res) => {
   const user = req.params.username;
   try {
     const response = await axios.get(
       `https://api.github.com/users/${user}/repos`,
       {
-        headers: {
-          authorization: TOKEN ? `token ${TOKEN}` : '',
-        },
+        headers: { Authorization: TOKEN ? `token ${TOKEN}` : '' },
       }
     );
     const parsedData = await dataParser.parseData(response.data);
