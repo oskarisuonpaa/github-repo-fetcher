@@ -6,6 +6,7 @@ const cors = require('cors');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+console.log(process.env.GITHUB_TOKEN);
 
 app.use(express.json());
 app.use(cors());
