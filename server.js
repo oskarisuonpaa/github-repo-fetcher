@@ -14,7 +14,12 @@ app.get('/:username', async (req, res) => {
   const user = req.params.username;
   try {
     const response = await axios.get(
-      `https://api.github.com/users/${user}/repos`
+      `https://api.github.com/users/${user}/repos`,
+      {
+        headers: {
+          authorization: `token ${process.env.GITHUB_TOKEN}`,
+        },
+      }
     );
     const parsedData = await dataParser.parseData(response.data);
     res.json(parsedData);
