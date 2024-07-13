@@ -25,11 +25,11 @@ async function parseData(data, token) {
     description: truncateDescription(repo.description),
     updated_at: repo.updated_at,
     stargazers_count: repo.stargazers_count,
-    watchers_count: repo.watchers_count,
     forks_count: repo.forks_count,
     languages: await fetchLanguages(repo.languages_url, token),
     topics: repo.topics,
     license: repo.license ? repo.license.name : '',
+    url: repo.html_url,
   }));
 
   const parsedData = await Promise.all(parsedDataPromises);
