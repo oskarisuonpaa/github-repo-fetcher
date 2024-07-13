@@ -8,15 +8,17 @@ function truncateDescription(description) {
   return description;
 }
 
-async function fetchLanguages(url) {
-  const response = await axios.get(url);
+async function fetchLanguages(url, token) {
+  const response = await axios.get(url, {
+    headers: { Authorization: token ? `token ${token}` : '' },
+  });
   return Object.keys(response.data);
 }
 
-async function parseData(data) {
+async function parseData(data, token) {
   const parsedData = await Promise.all(
     data.map(async (repo) => {
-      const languages = await fetchLanguages(repo.languages_url);
+      const languages = await fetchLanguages(repo.languages_url, token);
       return {
         name: repo.name,
         description: truncateDescription(repo.description),

@@ -31,7 +31,7 @@ app.get('/api/:username', async (req, res) => {
         headers: { Authorization: TOKEN ? `token ${TOKEN}` : '' },
       }
     );
-    const parsedData = await dataParser.parseData(response.data);
+    const parsedData = await dataParser.parseData(response.data, TOKEN);
     res.json(parsedData);
   } catch (error) {
     if (error.response && error.response.status === 404) {
