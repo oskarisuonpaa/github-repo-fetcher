@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-console.log(process.env.GITHUB_TOKEN);
+const TOKEN = process.env.GITHUB_TOKEN;
 
 app.use(express.json());
 app.use(cors());
@@ -18,7 +18,7 @@ app.get('/:username', async (req, res) => {
       `https://api.github.com/users/${user}/repos`,
       {
         headers: {
-          authorization: `token ${process.env.GITHUB_TOKEN}`,
+          authorization: TOKEN ? `token ${TOKEN}` : '',
         },
       }
     );
